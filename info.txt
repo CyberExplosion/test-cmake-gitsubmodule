@@ -4,3 +4,22 @@
 # This is mainly a Git feature, that's why we have .git
 
 # Make sure to find some .gitignore C++ and CMake. And also ignore the /build folder
+
+- Using glfw as an example how to use git submodule. Since the project has a top level CMakeLists.txt, we can just put it into another folder and add it onto our top level CMAkeList and it will fit right in
+
+git submodule add https://github.com/glfw/glfw.git external/glfw
+
+- We have an external folder so we can organize multiple submodules
+
+# Make a few scripts to make better so you don't have to type in "cmake -S ..." over an dover again
+
+- Normally it will only build Adder and the main .obj since we haven't add in the submodule libraries yet
+
+- option in Makefiles can be use to change Makefiles behavior
+
+@ Ex, inside the glfw CMakeList.txt:
+option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
+
+- This is an option that been set default to ON, we can change that to OFF when we CMake because we don't want documentation
+
+cmake -DGLFW_BUILD_DOCS=OFF -S . -B build/
