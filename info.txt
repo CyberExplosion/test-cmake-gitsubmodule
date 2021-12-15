@@ -1,0 +1,6 @@
+- Helping you to use libraries from Github EASILY, automatic build and download and shit
+==> This is the best thing about CMake
+
+# This is mainly a Git feature, that's why we have .git
+
+# Make sure to find some .gitignore C++ and CMake. And also ignore the /build folder
