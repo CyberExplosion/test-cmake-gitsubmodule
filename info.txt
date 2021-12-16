@@ -23,3 +23,38 @@ option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
 - This is an option that been set default to ON, we can change that to OFF when we CMake because we don't want documentation
 
 cmake -DGLFW_BUILD_DOCS=OFF -S . -B build/
+
+* You can also use CMake GUI to enable or disable options
+
+## ! When you export project, the other computer will not
+automatically get the git submodule. You have to do sth in CMake for that
+That way when people clone your project, it won't tell people that they're missing library
+
+Follow this snippet, add it before you add the submodule:
+```
+## Download all the Submodules
+find_package(Git QUIET) # The quiet disable the message saying that git not found yada yada
+if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")  # This is different than the build folder, check if there's a .git init folder
+    option (GIT_SUBMODULE "Check submodules during build" ON)
+    if (GIT_SUBMODULE)
+        message(STATUS "Submodule update")  # The first arg for message tell which mode should the message be displayed in
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive   # The command tag tell it's a command we running, with what arguments
+            # GIT_EXECUTABLE is built in to CMAKE and some Git related funcitons. Look online for more
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}   # The tag tells that the next arg is the directory to run the previous commands on
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT   # The tag says to store the result of the previous command into what variable. Commands usually result in 0 for pass and 1 for fail in Linux Shell
+        )
+        if (NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT), please checkout submodules")
+        endif()
+    endif()
+endif()
+### All submodules should be downloaded
+
+## Check if all the Submodules is downloaded and exist
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt")
+    message(FATAL_ERROR "The glfw submodules was not downloaded! GIT_SUBMODULE was turned off or failed.")
+endif()
+```
+=> Change folder and naming as necessarily
+
+- Use the command `message {}` to tell user what's going on while they running CMake
